@@ -2,31 +2,75 @@
 import Cards from "../components/cards";
 import Button from "../components/button";
 import { useState } from "react";
-const initialState = [{
-    title: "",
-    description: "",
-    href: "",
-},]
+
+interface Card {
+    id: number;
+    title: string;
+    description: string;
+    href: string;
+    status: string;
+}
+
 export default function Dashboard() {
-    const [card, setCard] = useState(initialState)
+    const [card, setCard] = useState<Card[]>([]);
+    const [dropIndicator, setDropIndicator] = useState<string | null>(null)
     const handleClick = () => {
-        setCard([...card, {title:"new card", description:"new description", href:"https://www.google.com"}])
+        setCard([...card, {id: +card?.length, title:"new card", description:"new description", href:"https://www.google.com", status:"todo"}])
+    }
+    const handleDragStart = (event: React.DragEvent<HTMLDivElement>, cardId: number) => {
+        event.dataTransfer.setData("text/plain", cardId.toString())
+    }
+    const handleDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
+        event.dataTransfer.clearData()
+        setDropIndicator(null)
+    }
+    const handleDrop = (event: React.DragEvent<HTMLDivElement>, status : string) => {
+        event.preventDefault();
+        const cardId = event.dataTransfer.getData("text/plain")
+        const newcard = card?.find((_card) => +_card.id === +cardId)
+        if(newcard){
+            newcard.status = status
+            setCard((prevCard) => 
+                prevCard?.map((_card) => (_card.id === newcard.id ? newcard : _card))
+            )
+        }
+        setDropIndicator(null)
+    }
+    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        setDropIndicator(event.currentTarget.id)
+    }
+    const renderCard = (status: string) => {
+        return card?.filter(
+            (_card) => _card.status === status
+        ).map((_card) => (
+        <Cards 
+            key={_card.id}
+            id={_card.id}
+            title={_card.title} 
+            description={_card.description} 
+            href={_card.href} 
+            status={_card.status}
+            onDragStart={(event:any) => handleDragStart(event, _card.id)}
+            onDragEnd={handleDragEnd}
+            />
+        ))
     }
     return <>
         <h1>Welcome to the Dashboard</h1>
         <div className="grid grid-cols-3">
-            <section className="bg-slate-800 p-4 mx-2 rounded flex flex-col gap-2">
-                <h2>Todo</h2>
-                {card.map((card) => (<Cards key={card.title} title={card.title} description={card.description} href={card.href}/>))}
-            </section>
-            <section className="bg-slate-800 p-4 mx-2 rounded">
-                <h2>In Progress</h2>
-                <Cards title="Card 2" description="Description of card 2" href="https://www.google.com"/>
-            </section>
-            <section className="bg-slate-800 p-4 mx-2 rounded">
-                <h2>Done</h2>
-                <Cards title="Card 3" description="Description of card 3" href="https://www.google.com"/>
-            </section>
+            <h2>Todo</h2>
+            <h2>In Progress</h2>
+            <h2>Done</h2>
+            <div id="todo" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, "todo")} className="bg-slate-800 p-4 mx-2 rounded flex flex-col gap-2">
+                {renderCard("todo")}
+            </div>
+            <div id="in-progress" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, "in-progress")}  className="bg-slate-800 p-4 mx-2 rounded flex flex-col gap-2">
+                {renderCard("in-progress")}
+            </div>
+            <div id="done" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, "done")}  className="bg-slate-800 p-4 mx-2 rounded flex flex-col gap-2">
+                {renderCard("done")}
+            </div>
         </div>
         <Button title="Add card" className="bg-slate-800 p-4 m-2 rounded" onClick={() => { handleClick() }}/>
     </>
