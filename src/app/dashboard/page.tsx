@@ -57,7 +57,7 @@ export default function Dashboard() {
             status={_card.status}
             onDragStart={(event:any) => handleDragStart(event, _card.id)}
             onDragEnd={handleDragEnd}
-            />
+        />
         ))
     }
     return <>
@@ -77,8 +77,8 @@ export default function Dashboard() {
             </section>
         </div>
         <Button title="Add card" className="bg-slate-800 p-4 m-2 rounded" onClick={(e) => { handleClick(e) }}/>
-        {showForm && <section onClick={(e) => { handleClick(e) }} className="w-full h-full bg-slate-800 grid place-content-center opacity-80 absolute top-0">
-            <Form onClick={(e) => { setCard() }}/>
+        {showForm && <section onClick={(e) => { handleClick(e) }} className="w-full h-full bg-slate-800/80 grid place-content-center absolute top-0">
+            <Form card={card} setCard={setCard} showForm={showForm} setShowForm={setShowForm}/>
         </section>}
     </>
 }
