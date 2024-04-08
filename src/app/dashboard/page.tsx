@@ -1,6 +1,7 @@
 'use client'
 import Cards from "../components/cards";
 import Button from "../components/button";
+import Form from "../components/form";
 import { useState } from "react";
 
 interface Card {
@@ -14,17 +15,20 @@ interface Card {
 export default function Dashboard() {
     const [card, setCard] = useState<Card[]>([]);
     const [dropIndicator, setDropIndicator] = useState<string | null>(null)
-    const handleClick = () => {
-        setCard([...card, {id: +card?.length, title:"new card", description:"new description", href:"https://www.google.com", status:"todo"}])
+    const [showForm, setShowForm] = useState<boolean>(false)
+    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setShowForm(!showForm)
     }
-    const handleDragStart = (event: React.DragEvent<HTMLDivElement>, cardId: number) => {
+    const handleDragStart = (event: React.DragEvent<HTMLElement>, cardId: number) => {
         event.dataTransfer.setData("text/plain", cardId.toString())
     }
-    const handleDragEnd = (event: React.DragEvent<HTMLDivElement>) => {
+    const handleDragEnd = (event: React.DragEvent<HTMLElement>) => {
         event.dataTransfer.clearData()
         setDropIndicator(null)
     }
-    const handleDrop = (event: React.DragEvent<HTMLDivElement>, status : string) => {
+    const handleDrop = (event: React.DragEvent<HTMLElement>, status : string) => {
         event.preventDefault();
         const cardId = event.dataTransfer.getData("text/plain")
         const newcard = card?.find((_card) => +_card.id === +cardId)
@@ -36,7 +40,7 @@ export default function Dashboard() {
         }
         setDropIndicator(null)
     }
-    const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    const handleDragOver = (event: React.DragEvent<HTMLElement>) => {
         event.preventDefault();
         setDropIndicator(event.currentTarget.id)
     }
@@ -62,16 +66,19 @@ export default function Dashboard() {
             <h2>Todo</h2>
             <h2>In Progress</h2>
             <h2>Done</h2>
-            <div id="todo" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, "todo")} className="bg-slate-800 p-4 mx-2 rounded flex flex-col gap-2">
+            <section id="todo" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, "todo")} className="bg-slate-800 p-4 mx-2 rounded flex flex-col gap-2">
                 {renderCard("todo")}
-            </div>
-            <div id="in-progress" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, "in-progress")}  className="bg-slate-800 p-4 mx-2 rounded flex flex-col gap-2">
+            </section>
+            <section id="in-progress" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, "in-progress")}  className="bg-slate-800 p-4 mx-2 rounded flex flex-col gap-2">
                 {renderCard("in-progress")}
-            </div>
-            <div id="done" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, "done")}  className="bg-slate-800 p-4 mx-2 rounded flex flex-col gap-2">
+            </section>
+            <section id="done" onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, "done")}  className="bg-slate-800 p-4 mx-2 rounded flex flex-col gap-2">
                 {renderCard("done")}
-            </div>
+            </section>
         </div>
-        <Button title="Add card" className="bg-slate-800 p-4 m-2 rounded" onClick={() => { handleClick() }}/>
+        <Button title="Add card" className="bg-slate-800 p-4 m-2 rounded" onClick={(e) => { handleClick(e) }}/>
+        {showForm && <section onClick={(e) => { handleClick(e) }} className="w-full h-full bg-slate-800 grid place-content-center opacity-80 absolute top-0">
+            <Form onClick={(e) => { setCard() }}/>
+        </section>}
     </>
 }
