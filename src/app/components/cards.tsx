@@ -16,7 +16,7 @@ const Cards = ({ title, description, href, id, status, onDragStart, onDragEnd, i
     if(!id) return null
     return (
         <>
-            <div className="bg-slate-600 p-4 mx-2 rounded cursor-grab active:cursor-grabbing" style={{zIndex: 2}} draggable onDragStart={(event:any) => onDragStart(event, id)} onDragEnd={onDragEnd}>
+            <div className="bg-slate-600 p-4 mx-2 rounded cursor-grab active:cursor-grabbing" draggable onDragStart={(event:any) => onDragStart(event, id)} onDragEnd={onDragEnd}>
                 <h3>{title}</h3>
                 <p>{description}</p>
                 <a href={href && ""}>Read more</a>
@@ -30,7 +30,6 @@ const Cards = ({ title, description, href, id, status, onDragStart, onDragEnd, i
                     width: `${dragSize.w}px`,
                     top: 0,
                     left: 0,
-                    zIndex: 1
                 }}>
                     <h3>{title}</h3>
                     <p>{description}</p>
