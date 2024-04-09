@@ -4,8 +4,8 @@ type CardProps = {
     description: string;
     href: string;
     status: string;
-    onDragStart: (event: React.DragEvent<HTMLDivElement>, cardId: number) => void;
-    onDragEnd: (event: React.DragEvent<HTMLDivElement>) => void;
+    onDragStart: (event: any, cardId: number) => void;
+    onDragEnd: (event: any) => void;
 }
 const Cards = ({ title, description, href, id, status, onDragStart, onDragEnd}: CardProps) => {
     if(!id) return null

@@ -16,21 +16,26 @@ export default function Dashboard() {
     const [card, setCard] = useState<Card[]>([]);
     const [dropIndicator, setDropIndicator] = useState<string | null>(null)
     const [showForm, setShowForm] = useState<boolean>(false)
-    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    const handleClick = (e: any) => {
         e.preventDefault()
         e.stopPropagation()
         setShowForm(!showForm)
     }
-    const handleDragStart = (event: React.DragEvent<HTMLElement>, cardId: number) => {
-        event.dataTransfer.setData("text/plain", cardId.toString())
+    const handleDragStart = (event: any, cardId: number) => {
+        const section = event.currentTarget;
+        event.dataTransfer.setDragImage(section, event.nativeEvent.offsetX, event.nativeEvent.offsetY);
+        event.dataTransfer.setData("section", cardId.toString())
+        section.style.border = "1px solid";
     }
-    const handleDragEnd = (event: React.DragEvent<HTMLElement>) => {
+    const handleDragEnd = (event: any) => {
         event.dataTransfer.clearData()
         setDropIndicator(null)
+        const section = event.currentTarget;
+        section.style.border = "none";
     }
-    const handleDrop = (event: React.DragEvent<HTMLElement>, status : string) => {
+    const handleDrop = (event: any, status : string) => {
         event.preventDefault();
-        const cardId = event.dataTransfer.getData("text/plain")
+        const cardId = event.dataTransfer.getData("section")
         const newcard = card?.find((_card) => +_card.id === +cardId)
         if(newcard){
             newcard.status = status
@@ -40,7 +45,7 @@ export default function Dashboard() {
         }
         setDropIndicator(null)
     }
-    const handleDragOver = (event: React.DragEvent<HTMLElement>) => {
+    const handleDragOver = (event: any) => {
         event.preventDefault();
         setDropIndicator(event.currentTarget.id)
     }
