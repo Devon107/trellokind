@@ -31,3 +31,8 @@ body {
     text-wrap: balance;
   }
 }
+
+.dragging--hidden {
+  opacity: 0;
+  visiblity: hidden;
+}
