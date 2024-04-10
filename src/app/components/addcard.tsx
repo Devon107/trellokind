@@ -19,6 +19,7 @@ const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         };
         setCards((pv) => [...pv, newCard]);
         setAdding(false);
+        setText("");
     };
     return (
         <>
